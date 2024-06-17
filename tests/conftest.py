@@ -13,7 +13,7 @@ def transactions() -> list[dict]:
 
 
 @pytest.fixture
-def transactions1():
+def transactions1() -> list[dict]:
     """фикстура transactions1"""
     return [
         {

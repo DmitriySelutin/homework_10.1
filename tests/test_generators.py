@@ -1,9 +1,8 @@
 import pytest
+from src.generators import card_number_generator, filter_by_currency, transaction_descriptions
 
-from src.generators import filter_by_currency, transaction_descriptions, card_number_generator
 
-
-def test_filter_by_currency(transactions1):
+def test_filter_by_currency(transactions1: list) -> None:
     filter_currency = filter_by_currency(transactions1, "USD")
     assert next(filter_currency) == {
         "id": 939719570,
@@ -34,7 +33,7 @@ def test_filter_by_currency(transactions1):
     } == next(filter_currency)
 
 
-def test_transaction_descriptions(transactions1):
+def test_transaction_descriptions(transactions1: list) -> None:
     descriptions_generator = transaction_descriptions(transactions1)
     assert next(descriptions_generator) == "Перевод организации"
     assert next(descriptions_generator) == "Перевод со счета на счет"
