@@ -1,4 +1,5 @@
 import os
+
 import requests
 from dotenv import load_dotenv
 
@@ -15,7 +16,9 @@ def get_conversion(transactions):
         return amount
     elif currency == "USD" or currency == "EUR":
         try:
-            response = requests.get(API_URL.format(to="RUB", from_=currency, amount=amount),headers={"apikey": API_KEY})
+            response = requests.get(
+                API_URL.format(to="RUB", from_=currency, amount=amount), headers={"apikey": API_KEY}
+            )
             if response.status_code == 200:
                 data = response.json()
                 return data["result"]
