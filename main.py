@@ -1,7 +1,7 @@
 from src.processing import get_date_sorted, get_dictionary_key
 from src.widget import get_user_data, mask_account_card
 from src.generators import filter_by_currency, transaction_descriptions, card_number_generator
-
+from src.decorators import log
 
 transactions = [
             {"id": 41428829, "state": "EXECUTED", "date": "2019-07-03T18:35:29.512364"},
@@ -114,3 +114,17 @@ for _ in range(5):
 
 for card_number in card_number_generator(1, 10):
     print(card_number)
+
+@log(filename="mylog.txt")
+def my_function(x, y):
+    return x + y
+
+
+my_function(1, 2)
+
+@log(filename="mylog.txt")
+def my_function_error(x, y):
+    return x / y
+
+
+my_function_error(2, 0)
