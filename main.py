@@ -1,6 +1,10 @@
+import os.path
+
 from src.processing import get_date_sorted, get_dictionary_key
 from src.widget import get_user_data, mask_account_card
 from src.generators import filter_by_currency, transaction_descriptions, card_number_generator
+from src.utils import get_transactions
+from src.external_api import get_conversion
 
 
 transactions = [
@@ -114,3 +118,11 @@ for _ in range(5):
 
 for card_number in card_number_generator(1, 10):
     print(card_number)
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+file_path = os.path.join(current_dir, "data", "operations.json")
+transactions2 = get_transactions(file_path)
+
+for transaction in transactions2:
+    convert = get_conversion(transaction)
+    print(f"transaction in RUB: {convert}")
