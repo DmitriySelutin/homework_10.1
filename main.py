@@ -5,6 +5,7 @@ from src.generators import card_number_generator, filter_by_currency, transactio
 from src.processing import get_date_sorted, get_dictionary_key
 from src.utils import get_transactions
 from src.widget import get_user_data, mask_account_card
+from src.decorators import log
 
 transactions = [
     {"id": 41428829, "state": "EXECUTED", "date": "2019-07-03T18:35:29.512364"},
@@ -85,6 +86,7 @@ for _ in range(5):
 
 for card_number in card_number_generator(1, 10):
     print(card_number)
+
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(current_dir, "data", "operations.json")
