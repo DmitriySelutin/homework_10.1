@@ -1,11 +1,9 @@
 import os.path
 
-from src.external_api import get_conversion
 from src.generators import card_number_generator, filter_by_currency, transaction_descriptions
 from src.processing import get_date_sorted, get_dictionary_key
-from src.utils import get_transactions
+from src.utils import get_transactions_csv, get_transactions_excel
 from src.widget import get_user_data, mask_account_card
-from src.decorators import log
 
 transactions = [
     {"id": 41428829, "state": "EXECUTED", "date": "2019-07-03T18:35:29.512364"},
@@ -89,9 +87,13 @@ for card_number in card_number_generator(1, 10):
 
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
-file_path = os.path.join(current_dir, "data", "operations.json")
-transactions2 = get_transactions(file_path)
+file_path = os.path.join(current_dir, "../data", "transactions.csv")
+transactions3 = get_transactions_csv(file_path)
+print(transactions3)
 
-for transaction in transactions2:
-    convert = get_conversion(transaction)
-    print(f"transaction in RUB: {convert}")
+print()
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+file_path = os.path.join(current_dir, "../data", "transactions_excel.xlsx")
+transactions4 = get_transactions_excel(file_path)
+print(transactions4)
