@@ -2,6 +2,7 @@ import csv
 import json
 import os
 import re
+from collections import Counter
 
 import pandas as pd
 from src.logger import setup_logger
@@ -61,21 +62,28 @@ def get_transactions_filter_by_key(transactions, search_key):
     return result
 
 
-def get_transactions_by_category(transactions: list[dict], categories: dict) -> dict:
+def get_transactions_by_category(transactions, categories):
     """
-    Принимает список словарей с данными о банковских операциях и словарь категорий операций.
-    Возвращает словарь, в котором ключи - это названия категорий, а значения - количество операций в каждой категории.
+    Принимает список словарей с данными о банковских операциях и список категорий операций,
+    возвращает словарь, в котором ключи — это названия категорий, а значения — это количество
+    операций в каждой категории.
     """
-
-    category_counts = {category: 0 for category in categories}
-
-    for transaction in transactions:
-        if "description" in transaction:
-            for category in categories:
-                if category.lower() in transaction["description"].lower():
-                    category_counts[category] += 1
+    descriptions = [
+        transaction["description"]
+        for transaction in transactions
+        if "description" in transaction and transaction["description"] in categories
+    ]
+    category_counts = dict(Counter(descriptions))
 
     return category_counts
+
+
+# categories = ["Открытие вклада", "Перевод с карты на карту", "Перевод организации"]
+# current_dir = os.path.dirname(os.path.abspath(__file__))
+# file_path = os.path.join(current_dir, "../data", "transactions_excel.xlsx")
+# transactions = get_transactions_excel(file_path)
+# filter_transaction = get_transactions_by_category(transactions, categories)
+# print(filter_transaction)
 
 
 def get_transactions_filter_by_rub(transactions: list, search_key: str) -> list:
@@ -111,7 +119,6 @@ def get_transactions_filter_by_rub_xlsx(transactions: list, search_code: str) ->
     return result
 
 
-#
 # current_dir = os.path.dirname(os.path.abspath(__file__))
 # file_path = os.path.join(current_dir, "../data", "transactions_excel.xlsx")
 # transactions = get_transactions_excel(file_path)
