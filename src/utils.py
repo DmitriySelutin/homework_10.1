@@ -1,6 +1,8 @@
 import csv
 import json
 import os
+import re
+from collections import Counter
 
 import pandas as pd
 from src.logger import setup_logger
@@ -48,3 +50,79 @@ def get_transactions_excel(file_path):
         list_of_dicts = df_excel.to_dict("records")
         logger.info("Возвращает список словарей")
         return list_of_dicts
+
+
+def get_transactions_filter_by_key(transactions, search_key):
+    """Функция, которая будет принимать список словарей с данными о банковских операциях и строку поиска,
+    а возвращать список словарей."""
+    result = []
+    for transaction in transactions:
+        if "description" in transaction and re.search(search_key, transaction["description"], re.IGNORECASE):
+            result.append(transaction)
+    return result
+
+
+def get_transactions_by_category(transactions, categories):
+    """
+    Принимает список словарей с данными о банковских операциях и список категорий операций,
+    возвращает словарь, в котором ключи — это названия категорий, а значения — это количество
+    операций в каждой категории.
+    """
+    descriptions = [
+        transaction["description"]
+        for transaction in transactions
+        if "description" in transaction and transaction["description"] in categories
+    ]
+    category_counts = dict(Counter(descriptions))
+
+    return category_counts
+
+
+# categories = ["Открытие вклада", "Перевод с карты на карту", "Перевод организации"]
+# current_dir = os.path.dirname(os.path.abspath(__file__))
+# file_path = os.path.join(current_dir, "../data", "transactions_excel.xlsx")
+# transactions = get_transactions_excel(file_path)
+# filter_transaction = get_transactions_by_category(transactions, categories)
+# print(filter_transaction)
+
+
+def get_transactions_filter_by_rub(transactions: list, search_key: str) -> list:
+    """Функция фильтрации транзакций по коду валюты"""
+    result = []
+    for transaction in transactions:
+        if (
+            "operationAmount" in transaction
+            and "currency" in transaction["operationAmount"]
+            and re.search(search_key, transaction["operationAmount"]["currency"]["code"], re.IGNORECASE)
+        ):
+            result.append(transaction)
+    return result
+
+
+def get_transactions_filter_by_rub_csv(transactions: list, search_code: str) -> list:
+    """Функция фильтрации транзакций по коду валюты"""
+    result = []
+    for transaction in transactions:
+        if "currency_code" in transaction and re.search(search_code, transaction["currency_code"], re.IGNORECASE):
+            result.append(transaction)
+    return result
+
+
+def get_transactions_filter_by_rub_xlsx(transactions: list, search_code: str) -> list:
+    """Функция фильтрации транзакций по коду валюты"""
+    result = []
+    for transaction in transactions:
+        if pd.notnull(transaction["currency_code"]) and re.search(
+            search_code, transaction["currency_code"], re.IGNORECASE
+        ):
+            result.append(transaction)
+    return result
+
+
+# current_dir = os.path.dirname(os.path.abspath(__file__))
+# file_path = os.path.join(current_dir, "../data", "transactions_excel.xlsx")
+# transactions = get_transactions_excel(file_path)
+#
+#
+# transaction = get_transactions_filter_by_rub_xlsx(transactions, "RUB")
+# print(transaction)
